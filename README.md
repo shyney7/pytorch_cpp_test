@@ -2,7 +2,7 @@
     <img src="images/pytorch_cpp.png" width="50%">
 </h1>
 <p align="center">
-    C++ Implementation of PyTorch Tutorials for Deep Learning Researchers
+    C++ Implementation of PyTorch
     <br />
 <img src="https://img.shields.io/travis/prabhuomkar/pytorch-cpp">
 <img src="https://img.shields.io/github/license/prabhuomkar/pytorch-cpp">
@@ -10,6 +10,7 @@
 <img src="https://img.shields.io/badge/cmake-3.14-064f8d">
 </p>
 This is just a private playground repo of my first attempts with the Pytorch C++ API
+In this example the FANN learns the negation with 10 inputs of batch size 10 and the corresponding target outputs.
 
 ### Requirements
 
