@@ -26,6 +26,8 @@ torch::nn::Linear fc1{nullptr}, fc2{nullptr};
 
 };
 
+//----------------------Funktionsprototyp Onelinevector-------------------------------------------
+
 std::vector<float> onelinevector(const std::vector<std::vector<float>>& invector);
 
 //------------------------------------write csv Funktion------------------------------------------
@@ -173,6 +175,8 @@ std::vector<std::vector<float>> csv2Dvector(std::string inputFileName) {
     return data;
 }
 
+//-------------------------------------main-Funktion----------------------------
+
 int main() {
   
 auto net = std::make_shared<MeinNetz>();
@@ -189,6 +193,7 @@ auto net = std::make_shared<MeinNetz>();
       std::cout << x << " ";
       std::cout << std::endl;
     } */
+    std::cout << "Importierte Daten aus der csv Datei (Rohformat): " << std::endl;
     for (int i = 0; i< data.size(); i++){
       for (int j = 0; j<3 ; j++){
         std::cout << data[i][j];
@@ -196,6 +201,17 @@ auto net = std::make_shared<MeinNetz>();
       std::cout << std::endl;
     }
 
+//Transformation in 1D für tensor integration:
+std::cout << "Transformiere Input Vector mit Zeilenanzahl: " << data.size()
+<< " Und Spaltenanzahl: " << data.front().size() << " in einen Tensor:" << std::endl;
+
+unsigned int ivsize = data.size() * data.front().size();
+std::vector<float> linevec(ivsize);
+linevec = onelinevector(data);
+torch::Tensor itensor = torch::from_blob(linevec.data(), {(unsigned int) data.size(),(unsigned int) data.front().size()});
+std::cout << "Input Tensor: \n" << itensor << std::endl;
+//----------------------------------------------------------------
+/*
 torch::Tensor t1 = torch::from_blob(data.data(),{100,3});
 
 std::cout << "Ab hier Tensor: " << std::endl;
@@ -226,7 +242,7 @@ for(int i = 0; i<v1d.size();i++) {
 
 torch::Tensor t3 = torch::from_blob(v1d.data(),{100,3});
 std::cout << t3 << std::endl;
-
+*/
 
   return 0;
 }
