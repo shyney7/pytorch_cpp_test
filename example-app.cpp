@@ -12,13 +12,13 @@
 struct MeinNetz : torch::nn::Module {
   MeinNetz() {
     fc1 = register_module("fc1", torch::nn::Linear(10,10));
-    fc2 = register_module("fc2", torch::nn::Linear(10, 10));
+    fc2 = register_module("fc2", torch::nn::Linear(10,10));
 
   }
 
   torch::Tensor forward(torch::Tensor x) {
     x = torch::relu(fc1->forward(x));
-    x = torch::relu(fc2->forward(x));
+    x = fc2->forward(x);
     return x;
   }
 
@@ -179,12 +179,6 @@ std::vector<std::vector<float>> csv2Dvector(std::string inputFileName) {
 
 int main() {
   
-auto net = std::make_shared<MeinNetz>();
-
-//torch::Tensor in;
-
-
-
     //---------------------------------------------------------------------------
     std::vector<std::vector<float>> data = csv2Dvector("input.csv");
 
@@ -195,8 +189,8 @@ auto net = std::make_shared<MeinNetz>();
     } */
     std::cout << "Importierte Daten aus der csv Datei (Rohformat): " << std::endl;
     for (int i = 0; i< data.size(); i++){
-      for (int j = 0; j<3 ; j++){
-        std::cout << data[i][j];
+      for (int j = 0; j<data.front().size() ; j++){
+        std::cout << data[i][j] << " ";
       }
       std::cout << std::endl;
     }
@@ -222,8 +216,29 @@ olinevec = onelinevector(outputdata);
 torch::Tensor otensor = torch::from_blob(olinevec.data(), {(unsigned int) outputdata.size(),(unsigned int) outputdata.front().size()});
 std::cout << "Output Tensor: \n" << otensor << std::endl;
 
-
 //---------------------------------------------------------------------------------------------------
+//Objekt der Klasse MeinNetz erzeugen:
+auto net = std::make_shared<MeinNetz>();
+
+//Optimierer Auswahl:
+torch::optim::SGD optimizer(net->parameters(), /*lr=*/0.2);
+
+//Lernschleife:
+for (size_t epoch = 1; epoch <= 3000; epoch++) {
+  auto input = torch::autograd::Variable(itensor);
+  auto output = torch::autograd::Variable(otensor);
+
+  optimizer.zero_grad();
+  torch::Tensor prediction = net->forward(input);
+  torch::Tensor loss = torch::mse_loss(prediction, output);
+  loss.backward();
+  optimizer.step();
+
+  std::cout << "Loss: " << loss.item<float>() << std::endl;
+
+}
+
+
 /*
 torch::Tensor t1 = torch::from_blob(data.data(),{100,3});
 
