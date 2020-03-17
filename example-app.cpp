@@ -186,7 +186,7 @@ auto net = std::make_shared<MeinNetz>();
 
 
     //---------------------------------------------------------------------------
-    std::vector<std::vector<float>> data = csv2Dvector("three_cols_2.csv");
+    std::vector<std::vector<float>> data = csv2Dvector("input.csv");
 
     /* for (auto l : data) {
       for (auto x : l)
@@ -201,7 +201,7 @@ auto net = std::make_shared<MeinNetz>();
       std::cout << std::endl;
     }
 
-//Transformation in 1D für tensor integration:
+//Transformation des Inputs in 1D für tensor integration:
 std::cout << "Transformiere Input Vector mit Zeilenanzahl: " << data.size()
 << " Und Spaltenanzahl: " << data.front().size() << " in einen Tensor:" << std::endl;
 
@@ -210,7 +210,20 @@ std::vector<float> linevec(ivsize);
 linevec = onelinevector(data);
 torch::Tensor itensor = torch::from_blob(linevec.data(), {(unsigned int) data.size(),(unsigned int) data.front().size()});
 std::cout << "Input Tensor: \n" << itensor << std::endl;
-//----------------------------------------------------------------
+//------------------------Das gleiche für den Output (target)----------------------------------------
+std::vector<std::vector<float>> outputdata = csv2Dvector("output.csv");
+
+std::cout << "Transformiere Output Vector mit Zeilenanzahl: " << outputdata.size()
+<< " Und Spaltenanzahl: " << outputdata.front().size() << " in einen Tensor:" << std::endl;
+
+unsigned int ovsize = outputdata.size() * outputdata.front().size();
+std::vector<float> olinevec(ovsize);
+olinevec = onelinevector(outputdata);
+torch::Tensor otensor = torch::from_blob(olinevec.data(), {(unsigned int) outputdata.size(),(unsigned int) outputdata.front().size()});
+std::cout << "Output Tensor: \n" << otensor << std::endl;
+
+
+//---------------------------------------------------------------------------------------------------
 /*
 torch::Tensor t1 = torch::from_blob(data.data(),{100,3});
 
