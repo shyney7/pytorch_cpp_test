@@ -61,7 +61,14 @@ std::cout << "Transformiere Input Vector mit Zeilenanzahl: " << data.size()
 unsigned int ivsize = data.size() * data.front().size();
 std::vector<float> linevec(ivsize);
 linevec = onelinevector(data);
-torch::Tensor itensor = torch::from_blob(linevec.data(), {(unsigned int) data.size(),(unsigned int) data.front().size()});
+
+torch::Tensor itensor = torch::from_blob(
+    linevec.data(), 
+  {
+    static_cast<unsigned int>(data.size()),
+    static_cast<unsigned int>(data.front().size())
+  }
+  );
 std::cout << "Input Tensor: \n" << itensor << std::endl;
 
 //------------------------Das gleiche für den Output (target)----------------------------------------
@@ -73,7 +80,14 @@ std::cout << "Transformiere Output Vector mit Zeilenanzahl: " << outputdata.size
 unsigned int ovsize = outputdata.size() * outputdata.front().size();
 std::vector<float> olinevec(ovsize);
 olinevec = onelinevector(outputdata);
-torch::Tensor otensor = torch::from_blob(olinevec.data(), {(unsigned int) outputdata.size(),(unsigned int) outputdata.front().size()});
+
+torch::Tensor otensor = torch::from_blob(
+    olinevec.data(), 
+  {
+    static_cast<unsigned int>(outputdata.size()),
+    static_cast<unsigned int>(outputdata.front().size())
+  }
+  );
 std::cout << "Output Tensor: \n" << otensor << std::endl;
 
 //---------------------------------------------------------------------------------------------------
@@ -84,7 +98,7 @@ auto net = std::make_shared<MeinNetz>();
 torch::optim::SGD optimizer(net->parameters(), /*lr=*/0.2);
 
 //Lernschleife:
-for (size_t epoch = 1; epoch <= 3000; epoch++) {
+for (size_t epoch = 1; epoch <= 50; epoch++) {
   auto input = torch::autograd::Variable(itensor);
   auto output = torch::autograd::Variable(otensor);
 
@@ -94,7 +108,7 @@ for (size_t epoch = 1; epoch <= 3000; epoch++) {
   loss.backward();
   optimizer.step();
 
-  std::cout << "Loss: " << loss.item<float>() << std::endl;
+  std::cout << "Epoch: " << epoch << " Loss: " << loss.item<float>() << std::endl;
 
 }
 
